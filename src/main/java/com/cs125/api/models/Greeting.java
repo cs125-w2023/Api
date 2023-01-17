@@ -1,4 +1,4 @@
-package com.api.models;
+package com.cs125.api.models;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.api.controllers;
+package com.cs125.api.controllers;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.models.Greeting;
-
 import javax.ws.rs.core.Response;
+
+import com.cs125.api.models.Greeting;
 
 @RestController
 public class GreetingController {
