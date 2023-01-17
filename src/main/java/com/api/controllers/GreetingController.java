@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.models.Greeting;
 
+import javax.ws.rs.core.Response;
+
 @RestController
 public class GreetingController {
 
@@ -15,7 +17,7 @@ public class GreetingController {
     private final AtomicLong counter = new AtomicLong();
 
     @GetMapping("/greeting")
-    public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-        return new Greeting(counter.incrementAndGet(), String.format(template, name));
+    public Response greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
+        return Response.ok(new Greeting(counter.incrementAndGet(), String.format(template, name))).build();
     }
 }

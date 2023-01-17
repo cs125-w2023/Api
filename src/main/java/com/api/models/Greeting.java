@@ -1,3 +1,14 @@
 package com.api.models;
 
-public record Greeting(long id, String content) { }
+import lombok.Data;
+
+@Data
+public class Greeting {
+    long id;
+    String content;
+
+    public Greeting(long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+}
