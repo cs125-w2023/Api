@@ -62,6 +62,18 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>cs125-api</finalName>
     </build>
+
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>
+                    prod
+                </spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
