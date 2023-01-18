@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 @RequestMapping("/")
 public class HealthCheckController {
     @GetMapping
-    public Response getAllUsers() {
+    public Response healthCheck() {
         return Response.ok().build();
     }
 }
