@@ -4,11 +4,13 @@ import com.cs125.api.entities.User;
 import com.cs125.api.models.LoginDto;
 import com.cs125.api.models.NewUserDto;
 
+import com.cs125.api.models.UserInfoDto;
 import com.cs125.api.services.exceptions.InvalidLoginException;
 import com.cs125.api.services.exceptions.UserExistsException;
 import com.cs125.api.services.exceptions.UserNotFoundException;
 
 import com.cs125.api.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -52,6 +54,14 @@ public class UserServiceImpl implements UserService {
         if (!bCrypt.checkpw(loginDto.getPassword(), user.getPassword()))
             throw new InvalidLoginException();
 
+        return user;
+    }
+
+    public User saveUserInfo(UserInfoDto userInfoDto, Long userId) {
+        User user = userRepository.getById(userId);
+        user.setAge(userInfoDto.getAge());
+        user.setBodyTypeId(userInfoDto.getBodyTypeId());
+        userRepository.save(user);
         return user;
     }
 }
