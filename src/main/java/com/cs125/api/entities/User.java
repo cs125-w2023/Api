@@ -26,10 +26,7 @@ public class User {
 
     private int age;
 
-    @Column(name = "body_type_id")
-    private Long bodyTypeId;
-
-    @ManyToOne(targetEntity = BodyType.class, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="body_type_id", insertable = false, updatable = false)
     private BodyType bodyType;
 }

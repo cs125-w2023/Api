@@ -5,6 +5,7 @@ import com.cs125.api.models.LoginDto;
 import com.cs125.api.models.NewUserDto;
 
 import com.cs125.api.models.UserInfoDto;
+import com.cs125.api.repositories.BodyTypeRepository;
 import com.cs125.api.services.exceptions.InvalidLoginException;
 import com.cs125.api.services.exceptions.UserExistsException;
 import com.cs125.api.services.exceptions.UserNotFoundException;
@@ -23,6 +24,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    BodyTypeRepository bodyTypeRepository;
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -58,10 +63,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public User saveUserInfo(UserInfoDto userInfoDto, Long userId) {
-        User user = userRepository.getById(userId);
+        User user = userRepository.findById(userId).get();
         user.setAge(userInfoDto.getAge());
-        user.setBodyTypeId(userInfoDto.getBodyTypeId());
+        user.setBodyType(bodyTypeRepository.findById(userInfoDto.getBodyTypeId()).get());
         userRepository.save(user);
-        return user;
+        return userRepository.findById(userId).get();
     }
 }
