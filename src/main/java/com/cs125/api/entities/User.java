@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -23,10 +22,9 @@ public class User {
     private Long id;
     private String email;
     private String password;
-
     private int age;
 
     @ManyToOne
-    @JoinColumn(name="body_type_id", insertable = false, updatable = false)
+    @JoinColumn(name="body_type_id", insertable = false, updatable = true)
     private BodyType bodyType;
 }
