@@ -4,6 +4,7 @@ import com.cs125.api.entities.Exercise;
 import com.cs125.api.entities.User;
 import com.cs125.api.repositories.ExerciseRepository;
 import com.cs125.api.repositories.UserRepository;
+import com.cs125.api.services.exceptions.ExerciseWeekGeneratedException;
 import com.cs125.api.services.exceptions.ExerciseWeekGenerationException;
 import com.cs125.api.services.interfaces.ExerciseService;
 import com.mysql.cj.xdevapi.JsonArray;
@@ -78,15 +79,19 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     private List<Exercise> generateWeek(List<String> exercises, List<String> muscles, String difficulty) {
-        try {
-            // set date to midnight and get curr day number
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            int currDay = calendar.get(Calendar.DAY_OF_WEEK);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        int currDay = calendar.get(Calendar.DAY_OF_WEEK);
+        calendar.add(Calendar.DATE, -currDay - 1);
 
+        if (!exerciseRepository.findByDateAfter(calendar.getTime()).isEmpty())
+            throw new ExerciseWeekGeneratedException();
+
+        calendar.add(Calendar.DATE, currDay + 1);
+        try {
             // create http client and set api key
             List<Exercise> exerciseList = new ArrayList<>();
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -147,7 +152,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         exercise.setMuscle(jsonObject.get("muscle").toString());
         exercise.setEquipment(jsonObject.get("equipment").toString());
         exercise.setDifficulty(jsonObject.get("difficulty").toString());
-        exercise.setInstructions(jsonObject.get("instructions").toString());
+        exercise.setInstructions("");
         exercise.setDate(date);
         exercise.setCompleted(false);
         return exercise;
