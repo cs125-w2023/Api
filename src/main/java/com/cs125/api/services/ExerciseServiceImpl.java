@@ -99,7 +99,7 @@ public class ExerciseServiceImpl implements ExerciseService {
                 Dictionary<String, String> chosen = new Hashtable<>();
                 for (String muscle : muscles.get(i).split(",", -1)) {
                     URIBuilder builder = new URIBuilder(exerciseApi);
-                    builder.setParameter("type", type).setParameter("muscle", muscle);
+                    builder.setParameter("type", type).setParameter("muscle", muscle).setParameter("difficulty", difficulty);
                     JSONObject jsonObject = sendExerciseApiRequest(httpClient, request, builder.build(), chosen);
                     Exercise exercise = jsonObjectToExercise(jsonObject, calendar.getTime());
                     exerciseList.add(exercise);

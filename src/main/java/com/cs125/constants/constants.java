@@ -16,11 +16,11 @@ public class constants {
     public static String EXERCISES_SLIM_DIFFICULTY = "intermediate";
     public static List<String> EXERCISES_FIT = new ArrayList<>(List.of("strength", "cardio", "strength", "cardio", "strength", "strength", "stretching"));
     public static List<String> EXERCISES_FIT_MUSCLES = new ArrayList<>(List.of("chest,chest,triceps", "quadriceps,abdominals", "middle_back,lower_back,lats,biceps",
-            "quadriceps,abdominals", "traps,quadriceps,quadriceps", "chest,quadriceps,middle_back,biceps", ",,"));
-    public static String EXERCISES_FIT_DIFFICULTY = "expert";
+            "quadriceps,abdominals", "quadriceps,quadriceps", "chest,quadriceps,middle_back,biceps", ",,"));
+    public static String EXERCISES_FIT_DIFFICULTY = "intermediate";
     public static List<String> EXERCISES_HEAVY = new ArrayList<>(List.of("cardio", "strength", "cardio", "stretching", "cardio", "strength", "cardio"));
-    public static List<String> EXERCISES_HEAVY_MUSCLES = new ArrayList<>(List.of("quadriceps,abdominals", "chest,chest,triceps", "quadriceps,abdominals",
-            ",,,", "quadriceps,abdominals", "middle_back,lower_back,lats,biceps", "quadriceps,abdominals"));
+    public static List<String> EXERCISES_HEAVY_MUSCLES = new ArrayList<>(List.of("quadriceps,", "chest,chest,triceps", "quadriceps,",
+            ",,,", "quadriceps,", "middle_back,lower_back,lats,biceps", "quadriceps,"));
     public static String EXERCISES_HEAVY_DIFFICULTY = "beginner";
 
     public static int NUM_DAYS = 7;
