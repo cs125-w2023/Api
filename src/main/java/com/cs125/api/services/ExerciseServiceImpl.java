@@ -65,32 +65,26 @@ public class ExerciseServiceImpl implements ExerciseService {
 
         // generate exercise list based on body type
         if (user.getBodyType().getType().equals(BODYTYPE_SLIM)) {
-            exerciseList = generateWeek(EXERCISES_SLIM, EXERCISES_SLIM_MUSCLES, EXERCISES_SLIM_DIFFICULTY);
+            exerciseList = generateWeek(EXERCISES_SLIM, EXERCISES_SLIM_MUSCLES, EXERCISES_SLIM_DIFFICULTY, user);
         }
         else if (user.getBodyType().getType().equals(BODYTYPE_FIT)) {
-            exerciseList = generateWeek(EXERCISES_FIT, EXERCISES_FIT_MUSCLES, EXERCISES_FIT_DIFFICULTY);
+            exerciseList = generateWeek(EXERCISES_FIT, EXERCISES_FIT_MUSCLES, EXERCISES_FIT_DIFFICULTY, user);
         }
         else {
-            exerciseList = generateWeek(EXERCISES_HEAVY, EXERCISES_HEAVY_MUSCLES, EXERCISES_HEAVY_DIFFICULTY);
+            exerciseList = generateWeek(EXERCISES_HEAVY, EXERCISES_HEAVY_MUSCLES, EXERCISES_HEAVY_DIFFICULTY, user);
         }
 
         exerciseRepository.saveAll(exerciseList);
         return exerciseList;
     }
 
-    private List<Exercise> generateWeek(List<String> exercises, List<String> muscles, String difficulty) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+    private List<Exercise> generateWeek(List<String> exercises, List<String> muscles, String difficulty, User user) {
+        Calendar calendar = getWeeksCalendar();
         int currDay = calendar.get(Calendar.DAY_OF_WEEK);
-        calendar.add(Calendar.DATE, -currDay - 1);
 
-        if (!exerciseRepository.findByDateAfter(calendar.getTime()).isEmpty())
+        if (isThisWeekGenerated(user))
             throw new ExerciseWeekGeneratedException();
 
-        calendar.add(Calendar.DATE, currDay + 1);
         try {
             // create http client and set api key
             List<Exercise> exerciseList = new ArrayList<>();
@@ -107,6 +101,7 @@ public class ExerciseServiceImpl implements ExerciseService {
                     builder.setParameter("type", type).setParameter("muscle", muscle).setParameter("difficulty", difficulty);
                     JSONObject jsonObject = sendExerciseApiRequest(httpClient, request, builder.build(), chosen);
                     Exercise exercise = jsonObjectToExercise(jsonObject, calendar.getTime());
+                    exercise.setUser(user);
                     exerciseList.add(exercise);
                 }
                 calendar.add(Calendar.DATE, 1);
@@ -117,6 +112,22 @@ public class ExerciseServiceImpl implements ExerciseService {
         catch (Exception ex) {
             throw new ExerciseWeekGenerationException();
         }
+    }
+
+    private Calendar getWeeksCalendar() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+
+    private boolean isThisWeekGenerated(User user) {
+        Calendar calendar = getWeeksCalendar();
+        int currDay = calendar.get(Calendar.DAY_OF_WEEK);
+        calendar.add(Calendar.DATE, -currDay - 1);
+        return !exerciseRepository.findByDateAfterAndUser(calendar.getTime(), user).isEmpty();
     }
 
     // send an api request and return a random result
