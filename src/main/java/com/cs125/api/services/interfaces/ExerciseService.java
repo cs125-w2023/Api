@@ -5,5 +5,6 @@ import com.cs125.api.entities.Exercise;
 import java.util.List;
 
 public interface ExerciseService {
+    List<Exercise> getWeek(long userId);
     List<Exercise> generateWeek(long userId);
 }

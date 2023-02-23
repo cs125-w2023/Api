@@ -6,6 +6,7 @@ import com.cs125.api.repositories.ExerciseRepository;
 import com.cs125.api.repositories.UserRepository;
 import com.cs125.api.services.exceptions.ExerciseWeekGeneratedException;
 import com.cs125.api.services.exceptions.ExerciseWeekGenerationException;
+import com.cs125.api.services.exceptions.ExerciseWeekNotGeneratedException;
 import com.cs125.api.services.interfaces.ExerciseService;
 import com.mysql.cj.xdevapi.JsonArray;
 import org.apache.http.HttpResponse;
@@ -58,6 +59,20 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Value("${apikeys.exercise}")
     private String exerciseApiKey;
+
+    public List<Exercise> getWeek(long userId) {
+        User user = userRepository.findById(userId).get();
+
+        Calendar calendar = getWeeksCalendar();
+        int currDay = calendar.get(Calendar.DAY_OF_WEEK);
+        calendar.add(Calendar.DATE, -currDay - 1);
+        List<Exercise> exerciseList = exerciseRepository.findByDateAfterAndUser(calendar.getTime(), user);
+
+        if (exerciseList.isEmpty())
+            throw new ExerciseWeekNotGeneratedException();
+
+        return exerciseList;
+    }
 
     public List<Exercise> generateWeek(long userId) {
         User user = userRepository.findById(userId).get();
@@ -168,49 +183,4 @@ public class ExerciseServiceImpl implements ExerciseService {
         exercise.setCompleted(false);
         return exercise;
     }
-
-    /*
-    private List<Exercise> generateWeekSlim(int currDay) {
-        List<Exercise> exerciseList = new ArrayList<>();
-
-        try {
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet();
-            request.setHeader("X-Api-Key", exerciseApiKey);
-
-            for (int i = currDay - 1; i < NUM_DAYS; i++) {
-                String type = EXERCISES_SLIM.get(i);
-                for (String muscle : EXERCISES_SLIM_MUSCLES.get(i).split(",")) {
-                    URIBuilder builder = new URIBuilder(exerciseApi);
-                    builder.setParameter("type", type).setParameter("muscle", muscle).setParameter("difficulty", EXERCISES_SLIM_DIFFICULTY);
-                    JSONObject jsonObject = sendExerciseApiRequest(httpClient, request, builder.build());
-
-                    Exercise exercise = new Exercise();
-                    exercise.setName(jsonObject.get("name").toString());
-                    exercise.setType(type);
-                    exercise.setMuscle(jsonObject.get("muscle").toString());
-                    exercise.setEquipment(jsonObject.get("equipment").toString());
-                    exercise.setDifficulty(EXERCISES_SLIM_DIFFICULTY);
-                    exercise.setInstructions(jsonObject.get("instructions").toString());
-
-                    exerciseList.add(exercise);
-                }
-            }
-        }
-        catch (Exception ex) {
-            throw new ExerciseWeekGenerationException();
-        }
-
-        return exerciseList;
-    }
-
-    private List<Exercise> generateWeekFit(int currDay) {
-        return null;
-    }
-
-    private List<Exercise> generateWeekHeavy(int currDay) {
-        return null;
-    }
-
-     */
 }
