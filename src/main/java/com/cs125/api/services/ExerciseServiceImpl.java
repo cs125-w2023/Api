@@ -93,6 +93,12 @@ public class ExerciseServiceImpl implements ExerciseService {
         return exerciseList;
     }
 
+    public void markComplete(long id) {
+        Exercise exercise = exerciseRepository.findById(id).get();
+        exercise.setCompleted(true);
+        exerciseRepository.save(exercise);
+    }
+
     private List<Exercise> generateWeek(List<String> exercises, List<String> muscles, String difficulty, User user) {
         Calendar calendar = getWeeksCalendar();
         int currDay = calendar.get(Calendar.DAY_OF_WEEK);

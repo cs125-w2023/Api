@@ -4,7 +4,9 @@ import com.cs125.api.entities.Exercise;
 import com.cs125.api.services.interfaces.ExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,5 +31,11 @@ public class ExercisesController {
     public Response generateWeek(@RequestHeader("userId") long userId) {
         List<Exercise> exerciseList = exerciseService.generateWeek(userId);
         return Response.ok(exerciseList).build();
+    }
+
+    @PutMapping("{id}/mark-complete")
+    public Response markComplete(@PathVariable Long id) {
+        exerciseService.markComplete(id);
+        return Response.ok().build();
     }
 }
